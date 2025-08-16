@@ -169,6 +169,10 @@ if SwiftFM.isModelAvailable {
 }
 ```
 
+### Testing
+
+SwiftFM includes Swift Testing style tests to ensure everything works as expected on devices where Foundation Models are available.
+
 ### License
 
 SwiftFM is released under the MIT License.
