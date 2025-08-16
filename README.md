@@ -8,7 +8,8 @@
 ## Features
 
 - ✅ **Plain text generation** — pass a prompt, get back a string.  
-- ✅ **Guided typed generation** — decode directly into your own `Decodable & Generable` structs.  
+- ✅ **Guided typed generation** — decode directly into your own `Decodable & Generable` structs.
+- ✅ **Streaming Text Generation** — get incremental text chunks as they’re produced 
 - ✅ **Beginner-friendly API** — minimal surface, sensible defaults.  
 - ✅ **On-device** — powered by Apple’s Foundation Models framework, no server required.  
 - ✅ **Future-proof** — extend with streaming, tools, and advanced options later.
