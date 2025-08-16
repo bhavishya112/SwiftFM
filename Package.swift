@@ -19,5 +19,9 @@ let package = Package(
                 .enableExperimentalFeature("StrictConcurrency")
             ]
         ),
+        .testTarget(
+            name: "SwiftFMTests",
+            dependencies: ["SwiftFM"]
+        )
     ]
 )
