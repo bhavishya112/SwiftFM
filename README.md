@@ -99,6 +99,27 @@ Task {
 }
 ```
 
+### 3. Using a System Prompt
+
+```swift
+import SwiftFM
+
+// Configure SwiftFM with a system role
+let fm = SwiftFM(config: .init(system: "You are a professional snooker coach."))
+
+Task {
+    do {
+        let tip = try await fm.generateText(
+            for: "Give me a practice drill to improve cue ball control."
+        )
+        print(tip)
+        // e.g. "Set up three reds in a line and practice stopping the cue ball dead after each pot."
+    } catch {
+        print("Error:", error)
+    }
+}
+```
+
 ### Check availability at runtime:
 ```swift
 if SwiftFM.isModelAvailable {
