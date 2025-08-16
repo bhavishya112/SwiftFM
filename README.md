@@ -21,7 +21,7 @@ SwiftFM requires the Apple Intelligence Foundation Models, which are only availa
 
 - iOS 26 or later  
 - iPadOS 26 or later  
-- macOS 15 or later  
+- macOS 26 or later  
 
 ---
 
