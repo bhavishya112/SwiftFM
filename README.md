@@ -1,6 +1,6 @@
 # SwiftFM
 
-> **Super-simple API for Apple Foundation Models in Swift (iOS 26+, macOS 15+).**  
+> **Super-simple API for Apple Foundation Models in Swift (iOS 26+, macOS 26+).**  
 > A lightweight façade designed for beginners: generate text or strongly-typed results in one line.
 
 ---
