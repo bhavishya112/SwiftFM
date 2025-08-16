@@ -25,6 +25,13 @@ SwiftFM requires the Apple Intelligence Foundation Models, which are only availa
 - macOS 26 or later  
 
 ---
+## Swift 6 Readiness
+
+SwiftFM is fully Swift 6 ready.
+    •    All types conform to Sendable where appropriate.
+    •    Concurrency is handled safely with actor isolation.
+    •    Package settings enable Strict Concurrency checking for maximum safety.
+---
 
 ## Installation
 

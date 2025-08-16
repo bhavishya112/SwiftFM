@@ -6,13 +6,13 @@ import FoundationModels
 public actor SwiftFM {
     private let session: LanguageModelSession
     private let config: Config
-    
+
     /// Configuration options applied per call.
-    public struct Config {
+    public struct Config: Sendable {
         public var system: String?
         public var temperature: Double
         public var maximumResponseTokens: Int?
-        
+
         public init(system: String? = nil,
                     temperature: Double = 0.6,
                     maximumResponseTokens: Int? = nil) {
@@ -21,7 +21,7 @@ public actor SwiftFM {
             self.maximumResponseTokens = maximumResponseTokens
         }
     }
-    
+
     /// Create a new SwiftFM client with an optional system prompt and generation settings.
     public init(config: Config = .init()) {
         self.config = config
@@ -31,7 +31,7 @@ public actor SwiftFM {
             self.session = LanguageModelSession()
         }
     }
-    
+
     /// Generate a plain text response.
     /// - Parameter prompt: The instruction or question.
     /// - Returns: Model-generated text.
@@ -44,26 +44,32 @@ public actor SwiftFM {
         let r = try await session.respond(to: prompt, options: opts)
         return r.content
     }
-    
+
     /// Streams a plain text response from the model as it is being generated.
     /// - Parameter prompt: The instruction or question to send to the model.
     /// - Returns: An `AsyncThrowingStream<String, Error>` that yields text chunks
     ///   sequentially as they are produced by the model.
     public func streamText(for prompt: String) -> AsyncThrowingStream<String, Error> {
-        AsyncThrowingStream { continuation in
-            Task {
+        let s = self.session
+        let cfg = self.config
+        
+        return AsyncThrowingStream { continuation in
+            let task = Task {
                 do {
                     var opts = GenerationOptions()
-                    opts.temperature = self.config.temperature
-                    if let max = self.config.maximumResponseTokens { opts.maximumResponseTokens = max }
+                    opts.temperature = cfg.temperature
+                    if let max = cfg.maximumResponseTokens {
+                        opts.maximumResponseTokens = max
+                    }
 
                     let p = Prompt(prompt)
-                    let snapshots = self.session.streamResponse(
+                    let stream = s.streamResponse(
                         options: opts,
                         prompt: { @Sendable in p }
                     )
 
-                    for try await snap in snapshots {
+                    for try await snap in stream {
+                        if Task.isCancelled { break }
                         continuation.yield(snap.content)
                     }
                     continuation.finish()
@@ -71,9 +77,10 @@ public actor SwiftFM {
                     continuation.finish(throwing: error)
                 }
             }
+            continuation.onTermination = { _ in task.cancel() }
         }
     }
-    
+
     /// Generate a strongly-typed result using guided generation.
     /// - Parameters:
     ///   - prompt: The instruction describing the desired object.
@@ -91,15 +98,15 @@ public actor SwiftFM {
         let r = try await session.respond(to: prompt, generating: T.self, options: opts)
         return r.content
     }
-    
+
     /// Indicates whether the model is currently responding.
     public var isBusy: Bool { session.isResponding }
-    
+
     /// True if the on-device model is available on this device.
     public static var isModelAvailable: Bool {
         SystemLanguageModel.default.isAvailable
     }
-    
+
     /// Detailed availability state (e.g. not supported, not enabled, not ready).
     public static var modelAvailability: SystemLanguageModel.Availability {
         SystemLanguageModel.default.availability

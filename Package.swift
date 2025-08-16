@@ -12,6 +12,12 @@ let package = Package(
         .library(name: "SwiftFM", targets: ["SwiftFM"])
     ],
     targets: [
-        .target(name: "SwiftFM"),
+        .target(
+            name: "SwiftFM",
+            swiftSettings: [
+                .enableUpcomingFeature("StrictConcurrency"),
+                .enableExperimentalFeature("StrictConcurrency")
+            ]
+        ),
     ]
 )
