@@ -1,4 +1,5 @@
 import Foundation
+import Playgrounds
 import FoundationModels
 
 /// `SwiftFM` is a simple façade over Apple's Foundation Models framework.
@@ -76,3 +77,6 @@ public actor SwiftFM {
         SystemLanguageModel.default.availability
     }
 }
+
+
+

@@ -15,6 +15,16 @@
 
 ---
 
+## Availability
+
+SwiftFM requires the Apple Intelligence Foundation Models, which are only available on:
+
+- iOS 26 or later  
+- iPadOS 26 or later  
+- macOS 15 or later  
+
+---
+
 ## Installation
 
 Add **SwiftFM** to your project using Swift Package Manager:
@@ -32,10 +42,20 @@ Add **SwiftFM** to your project using Swift Package Manager:
 ```swift
 import SwiftFM
 
+
 let fm = SwiftFM()
-let response = try await fm.generateText(for: "Explain a century break in snooker in one sentence.")
-print(response)
-// "A century break is when a player scores 100 points or more in a single visit."
+
+Task {
+    do {
+        let response = try await fm.generateText(
+            for: "Explain a century break in snooker in one sentence."
+        )
+        print(response)
+        // "A century break is when a player scores 100 points or more in a single visit."
+    } catch {
+        print("Error:", error)
+    }
+}
 ```
 
 ### 2. Strongly-Typed Guided Generation
@@ -43,22 +63,40 @@ print(response)
 To use guided generation, your type must conform to Decodable & Sendable & Generable.
 
 ```swift
-import SwiftFM
-import FoundationModels
-
-struct Tip: Decodable, Sendable, Generable {
+@Generable
+struct MatchPrediction: Decodable, Sendable {
+    @Guide(description: "First player’s name")
     let player: String
+
+    @Guide(description: "Opponent’s name")
+    let opponent: String
+
+    @Guide(description: "Who is predicted to win")
+    let predictedWinner: String
+
+    @Guide(description: "Confidence 0.0–1.0")
     let confidence: Double
 }
 
 let fm = SwiftFM()
-let tip: Tip = try await fm.generateJSON(
-    for: "Pick a likely winner and provide {player, confidence}.",
-    as: Tip.self
-)
 
-print(tip.player, tip.confidence)
-// "Ronnie O'Sullivan 0.87"
+Task {
+    do {
+        let prediction: MatchPrediction = try await fm.generateJSON(
+            for: """
+            Imagine a snooker match.
+            Choose two well-known players and predict the winner.
+            Return {player, opponent, predictedWinner, confidence}.
+            """,
+            as: MatchPrediction.self
+        )
+
+        print("Upcoming match: \(prediction.player) vs \(prediction.opponent)")
+        print("Predicted winner: \(prediction.predictedWinner) (\(Int(prediction.confidence * 100))%)")
+    } catch {
+        print("Error:", error)
+    }
+}
 ```
 
 ### Check availability at runtime:
@@ -69,15 +107,6 @@ if SwiftFM.isModelAvailable {
     print("Not available:", SwiftFM.modelAvailability)
 }
 ```
-
-### Availability
-
-SwiftFM requires the Apple Intelligence Foundation Models, which are only available on:
-	•	iOS 26 or later
-	•	iPadOS 26 or later
-	•	macOS 15 or later
-
-Note: Foundation Models are not currently supported on watchOS or tvOS. If you add SwiftFM to those platforms, it will not compile.
 
 ### License
 
