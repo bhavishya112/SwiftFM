@@ -120,6 +120,38 @@ Task {
 }
 ```
 
+### 4. Streaming Text Generation
+
+```swift
+let fm = SwiftFM()
+
+Task {
+    do {
+        for try await chunk in await fm.streamText(for: "Explain the rules of snooker step by step.") {
+            print(chunk, terminator: "")
+        }
+    } catch {
+        print("Stream failed:", error)
+    }
+}
+```
+
+SwiftUI Example
+
+```swift
+@State private var text = ""
+
+Task {
+    do {
+        for try await chunk in await fm.streamText(for: "Explain the rules of snooker step by step.") {
+            text += chunk
+        }
+    } catch {
+        print("Stream failed:", error)
+    }
+}
+```
+
 ### Check availability at runtime:
 ```swift
 if SwiftFM.isModelAvailable {
@@ -137,6 +169,14 @@ This means:
 	•	You are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of this software.
 	•	The only requirements are that you include the original license and copyright notice in copies or substantial portions of the software.
 	•	The software is provided “as is”, without warranty of any kind.
+ 
+### Attribution
+
+SwiftFM was created by Ricky Stone.  
+If you use or modify this library, please consider including a reference such as:  
+“Based on Ricky Stone’s SwiftFM.”
+
+This is not a requirement of the MIT License, but an appreciated courtesy.
 
 
 
