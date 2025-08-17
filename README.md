@@ -153,7 +153,7 @@ SwiftUI Example
 Task {
     do {
         for try await chunk in await fm.streamText(for: "Explain the rules of snooker step by step.") {
-            text += chunk
+            text = chunk
         }
     } catch {
         print("Stream failed:", error)
